@@ -1,0 +1,29 @@
+# Model Baseline Report
+
+**Date: 2025-08-12
+
+**Dataset
+- CREMA-D dataset
+- Number of files: 7442
+- Test split size: 20%
+
+**Model
+- griko/emotion_8_cls_svm_ecapa_ravdess
+- trained on RAVDESS dataset
+
+**Label mapping
+- model labels mapped to CREMA-D dataset
+    - calm, neutral -> NEU
+    - happy -> HAP
+    - sad -> SAD
+    - angry -> ANG
+    - fearful -> FEA
+    - disgust -> DIS
+    - surprised -> HAP
+
+**F1
+- score : 0.30173146979009224
+
+**Notes
+- The model was trained on the RAVDESS dataset, but was tested using the CREMA-D dataset
+- Mapping was not one-to-one, possibly contributing to low score
