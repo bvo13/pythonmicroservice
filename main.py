@@ -20,12 +20,10 @@ from torch import nn
 from concurrent.futures import ThreadPoolExecutor
 
 
-# Initialize thread pool
 thread_pool = ThreadPoolExecutor(max_workers=4)
 
 
 
-# Initialize models at startup
 feature_extractor = None
 wav2vec_model = None
 classifier = None
@@ -245,7 +243,6 @@ async def download_and_handle_audio(item: URL):
             device = "cuda" if torch.cuda.is_available() else "cpu"
             
             try:
-                # Run model inference in a thread pool
                 def run_inference():
                     audio = load_audio(temp_converted_audio_path)
                     embedding = extract_embedding(audio, feature_extractor, wav2vec_model, device)
@@ -256,12 +253,10 @@ async def download_and_handle_audio(item: URL):
                         preds = (probs >= thresholds).astype(int)
                     return preds, probs
                 
-                # Run the blocking operation in a thread pool
                 loop = asyncio.get_event_loop()
                 preds, probs = await loop.run_in_executor(thread_pool, run_inference)
                 
                 
-                # Separate predictions into true and false
                 true_predictions = []
                 false_predictions = []
                 
@@ -272,14 +267,12 @@ async def download_and_handle_audio(item: URL):
                         false_predictions.append(f"{label} ({prob:.3f})")
                 
                 
-                # Format the predictions string - only include detected traits
                 predictions_str = "Displays the following traits:\n"
                 if true_predictions:
                     predictions_str += "- " + "\n- ".join(true_predictions)
                 else:
                     predictions_str += "None"
                 
-                # Ensure predictions_str is a valid string
                 predictions_str = str(predictions_str).strip()
                 
             except Exception as e:
@@ -300,7 +293,6 @@ async def download_and_handle_audio(item: URL):
             if duration_minutes > 0 and len(transcript) > 0:
                 words_per_minute = word_count / duration_minutes
             
-            # Create the response dictionary explicitly first for debugging
             response_data = {
                 "traits": predictions_str,
                 "transcription": audio_transcription,
@@ -308,7 +300,6 @@ async def download_and_handle_audio(item: URL):
                 "wpm": words_per_minute
             }
             
-            # Print the response for debugging
             
             
             return JSONResponse(
