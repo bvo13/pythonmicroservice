@@ -248,9 +248,7 @@ async def download_and_handle_audio(item: URL):
                 # Run model inference in a thread pool
                 def run_inference():
                     audio = load_audio(temp_converted_audio_path)
-                    print("Audio loaded successfully")
                     embedding = extract_embedding(audio, feature_extractor, wav2vec_model, device)
-                    print("Embedding extracted successfully")
                     with torch.no_grad():
                         embedding = embedding.to(device)
                         logits = classifier(embedding)
@@ -262,23 +260,17 @@ async def download_and_handle_audio(item: URL):
                 loop = asyncio.get_event_loop()
                 preds, probs = await loop.run_in_executor(thread_pool, run_inference)
                 
-                print("\nPrediction Results:")
-                print(f"Probabilities shape: {probs.shape}")
-                print(f"Predictions shape: {preds.shape}")
                 
                 # Separate predictions into true and false
                 true_predictions = []
                 false_predictions = []
                 
                 for label, pred, prob in zip(LABEL_COLUMNS, preds[0], probs[0]):
-                    print(f"{label}: pred={pred}, prob={prob:.3f}")
                     if pred == 1:
                         true_predictions.append(f"{label} ({prob:.3f})")
                     else:
                         false_predictions.append(f"{label} ({prob:.3f})")
                 
-                print(f"\nTrue predictions: {len(true_predictions)}")
-                print(f"False predictions: {len(false_predictions)}")
                 
                 # Format the predictions string - only include detected traits
                 predictions_str = "Displays the following traits:\n"
@@ -317,8 +309,7 @@ async def download_and_handle_audio(item: URL):
             }
             
             # Print the response for debugging
-            print("\nFinal API Response:")
-            print(response_data)
+            
             
             return JSONResponse(
                 content=response_data,
